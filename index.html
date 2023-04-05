@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+    <title>US Passport Size Image Cropper</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #EDEEF0;
+            background-image: radial-gradient(circle, #B0BAC5 5%, transparent 5%);
+            background-size: 10px 10px;
+            background-position: center center;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">US Passport Size Image Cropper</h1>
+        <div class="row">
+            <div class="col-md-6 mb-5">
+                <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="img">Upload Image:</label>
+                        <input type="file" name="img" id="img" class="form-control-file">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+            <div class="col-md-6 mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Processed Image</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <img id="processed-img" src="" alt="" class="img-thumbnail">
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="#" id="download-btn" class="btn btn-primary" download="processed.jpg">Download Processed Image</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get the image elements
+        var processedImg = document.getElementById('processed-img');
+        // Get the download button element
+        var downloadBtn = document.getElementById('download-btn');
+        // Set up the upload form
+        var uploadForm = document.querySelector('form');
+        uploadForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Get the selected image file
+            var imgFile = document.getElementById('img').files[0];
+            // Create a new FormData object
+            var formData = new FormData();
+            // Append the image file to the FormData object
+            formData.append('img', imgFile);
+            // Send a POST request to the Flask app to process the image
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Set the source of the processed image element
+                processedImg.src = data;
+                // Set the download link href to the processed image file path
+                downloadBtn.href = data;
+            })
+        });
+    </script>
+</body>
+</html>
